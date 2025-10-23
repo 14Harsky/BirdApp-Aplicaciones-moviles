@@ -12,6 +12,7 @@ import com.example.birdapp.view.FormularioScreen
 import com.example.birdapp.view.PerfilScreen
 import com.example.birdapp.view.ResumenScreen
 import com.example.birdapp.viewmodel.UsuarioViewModel
+import com.example.birdapp.view.MisAvesScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("resumen") {
-                    HubPrincipalScreen(viewModel = usuarioViewModel, navController = navController)
+                    ResumenScreen(viewModel = usuarioViewModel, navController = navController)
                 }
 
                 composable("aves") {
@@ -37,12 +38,10 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("perfil") {
-                    // Pantalla de perfil detallado
                     PerfilScreen(viewModel = usuarioViewModel, navController = navController)
                 }
 
                 composable("mis-aves") {
-                    // Pantalla de aves observadas (futura)
                     MisAvesScreen(navController = navController)
                 }
             }

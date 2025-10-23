@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import com.example.birdapp.viewmodel.UsuarioViewModel
 
 @Composable
-fun HubPrincipalScreen(
+fun ResumenScreen(
     viewModel: UsuarioViewModel,
     navController: NavController
 ) {
