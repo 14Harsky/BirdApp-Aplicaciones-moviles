@@ -12,13 +12,85 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.birdapp.model.Ave
 import com.example.birdapp.viewmodel.AvesViewModel
+import com.example.birdapp.viewmodel.AvesObservadasViewModel
 
 @Composable
 fun AvesScreen(navController: NavController) {
     val avesViewModel: AvesViewModel = viewModel()
+    val avesObservadasViewModel: AvesObservadasViewModel = viewModel()
     val aves by avesViewModel.aves.collectAsState()
     val isLoading by avesViewModel.isLoading.collectAsState()
+
+
+    var aveSeleccionada by remember { mutableStateOf<Ave?>(null) }
+    var mostrarDialogo by remember { mutableStateOf(false) }
+    var ubicacion by remember { mutableStateOf("") }
+    var notas by remember { mutableStateOf("") }
+
+
+    if (mostrarDialogo) {
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDialogo = false
+                ubicacion = ""
+                notas = ""
+            },
+            title = { Text("Agregar Observación") },
+            text = {
+                Column {
+                    Text("Ave: ${aveSeleccionada?.name?.spanish ?: ""}")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = ubicacion,
+                        onValueChange = { ubicacion = it },
+                        label = { Text("Ubicación *") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = notas,
+                        onValueChange = { notas = it },
+                        label = { Text("Notas (opcional)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = false,
+                        maxLines = 3
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        aveSeleccionada?.let { ave ->
+                            avesObservadasViewModel.agregarAveObservada(
+                                ave = ave,
+                                ubicacion = ubicacion,
+                                notas = notas
+                            )
+                            mostrarDialogo = false
+                            ubicacion = ""
+                            notas = ""
+                        }
+                    },
+                    enabled = ubicacion.isNotBlank()
+                ) {
+                    Text("Agregar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        mostrarDialogo = false
+                        ubicacion = ""
+                        notas = ""
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -45,7 +117,11 @@ fun AvesScreen(navController: NavController) {
                 items(aves) { ave ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        onClick = {
+                            aveSeleccionada = ave
+                            mostrarDialogo = true
+                        }
                     ) {
                         Column {
                             AsyncImage(
@@ -65,6 +141,12 @@ fun AvesScreen(navController: NavController) {
                                     ave.name.english,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    "Toca para agregar observación",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
