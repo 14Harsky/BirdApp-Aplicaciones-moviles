@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-// Modelo para Register
+
 data class Usuario(
     val id: Int? = null,
     val nombre: String,
@@ -21,14 +21,14 @@ data class Usuario(
     val clave: String? = null
 )
 
-// Modelo para Login (Request)
+
 data class LoginRequest(
     val correo: String,
     @SerializedName("password")
     val clave: String
 )
 
-// Modelo para Login (Response)
+
 data class AuthResponse(
     val token: String,
     val id: Int,
@@ -36,13 +36,13 @@ data class AuthResponse(
     val correo: String
 )
 
-// ¡NUEVO! Modelo para Update Profile (Request)
+
 data class UpdateProfileRequest(
     val nombre: String,
     val correo: String
 )
 
-// Modelo para ChangePassword (Request)
+
 data class ChangePasswordRequest(
     val claveActual: String,
     val claveNueva: String
@@ -60,8 +60,8 @@ interface UsuarioApiService {
     suspend fun updateUser(
         @Header("Authorization") token: String,
         @Path("id") userId: Int,
-        @Body updateRequest: UpdateProfileRequest // <-- Usamos el nuevo modelo
-    ): Usuario // La respuesta del backend sí es un objeto Usuario completo
+        @Body updateRequest: UpdateProfileRequest
+    ): Usuario
 
     @DELETE("Api/usuario/eliminar/{id}")
     suspend fun deleteUser(
@@ -94,4 +94,5 @@ interface UsuarioApiService {
             return retrofit.create(UsuarioApiService::class.java)
         }
     }
+
 }
