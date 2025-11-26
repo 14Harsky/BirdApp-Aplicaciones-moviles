@@ -20,7 +20,7 @@ fun PerfilScreen(viewModel: UsuarioViewModel, navController: NavController) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // ... (el resto de la UI de PerfilScreen se mantiene igual)
+
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(8.dp)) {
@@ -58,7 +58,7 @@ fun PerfilScreen(viewModel: UsuarioViewModel, navController: NavController) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
-                    onClick = { viewModel.logout() }, // <-- Solo llama a logout
+                    onClick = { viewModel.logout() },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
@@ -93,7 +93,7 @@ fun PerfilScreen(viewModel: UsuarioViewModel, navController: NavController) {
     }
 }
 
-// ... (InfoRow Composable)
+
 @Composable
 fun InfoRow(label: String, value: String) {
     Row(
