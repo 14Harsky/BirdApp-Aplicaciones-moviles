@@ -12,7 +12,7 @@ data class Ave(
     data class Name(
         val spanish: String,
         val english: String,
-        val latin: String? // <-- Corregido: Ahora es opcional
+        val latin: String?
     )
 
     data class Images(
