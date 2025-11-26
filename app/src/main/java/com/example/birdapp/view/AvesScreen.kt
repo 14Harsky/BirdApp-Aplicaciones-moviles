@@ -1,5 +1,9 @@
 package com.example.birdapp.view
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,28 +11,54 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.birdapp.model.Ave
 import com.example.birdapp.viewmodel.AvesViewModel
 import com.example.birdapp.viewmodel.AvesObservadasViewModel
+import com.google.android.gms.location.LocationServices
+import java.text.Normalizer
 
 @Composable
-fun AvesScreen(navController: NavController) {
+fun AvesScreen(navController: NavController, avesObservadasViewModel: AvesObservadasViewModel) {
     val avesViewModel: AvesViewModel = viewModel()
-    val avesObservadasViewModel: AvesObservadasViewModel = viewModel()
     val aves by avesViewModel.aves.collectAsState()
     val isLoading by avesViewModel.isLoading.collectAsState()
-
+    val avesObservadas by avesObservadasViewModel.avesObservadas.collectAsState()
 
     var aveSeleccionada by remember { mutableStateOf<Ave?>(null) }
     var mostrarDialogo by remember { mutableStateOf(false) }
     var ubicacion by remember { mutableStateOf("") }
     var notas by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location ->
+                            if (location != null) {
+                                ubicacion = "${location.latitude}, ${location.longitude}"
+                            }
+                        }
+                }
+            }
+        }
+    )
 
     if (mostrarDialogo) {
         AlertDialog(
@@ -42,12 +72,29 @@ fun AvesScreen(navController: NavController) {
                 Column {
                     Text("Ave: ${aveSeleccionada?.name?.spanish ?: ""}")
                     Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = ubicacion,
-                        onValueChange = { ubicacion = it },
-                        label = { Text("Ubicación *") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Button(onClick = {
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            ) -> {
+                                fusedLocationClient.lastLocation
+                                    .addOnSuccessListener { location ->
+                                        if (location != null) {
+                                            ubicacion = "${location.latitude}, ${location.longitude}"
+                                        }
+                                    }
+                            }
+                            else -> {
+                                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                            }
+                        }
+                    }) {
+                        Text("Obtener Ubicación")
+                    }
+                    if (ubicacion.isNotEmpty()) {
+                        Text("Ubicación: $ubicacion")
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = notas,
@@ -92,6 +139,12 @@ fun AvesScreen(navController: NavController) {
         )
     }
 
+    val avesFiltradas = aves.filter { ave ->
+        val noObservada = avesObservadas.none { it.nombreAve == ave.name.spanish }
+        val coincideBusqueda = ave.name.spanish.unaccent().contains(searchText.unaccent(), ignoreCase = true)
+        noObservada && coincideBusqueda
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,6 +154,15 @@ fun AvesScreen(navController: NavController) {
             "Explorar Aves",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            label = { Text("Buscar ave") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
         if (isLoading) {
@@ -114,7 +176,7 @@ fun AvesScreen(navController: NavController) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(aves) { ave ->
+                items(avesFiltradas) { ave ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -155,4 +217,10 @@ fun AvesScreen(navController: NavController) {
             }
         }
     }
+}
+
+private fun String.unaccent(): String {
+    val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
+    val regex = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+    return regex.replace(temp, "")
 }

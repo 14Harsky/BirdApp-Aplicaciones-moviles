@@ -60,6 +60,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation(libs.androidx.compose.ui.text)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.11.4")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

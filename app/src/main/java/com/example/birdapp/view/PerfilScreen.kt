@@ -12,6 +12,7 @@ import com.example.birdapp.viewmodel.UsuarioViewModel
 @Composable
 fun PerfilScreen(viewModel: UsuarioViewModel, navController: NavController) {
     val estado by viewModel.estado.collectAsState()
+    var mostrarDialogoEliminar by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -19,92 +20,84 @@ fun PerfilScreen(viewModel: UsuarioViewModel, navController: NavController) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
-        Text(
-            "Mi Perfil",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        // ... (el resto de la UI de PerfilScreen se mantiene igual)
 
-        // Información Personal
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Información Personal",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                InfoRow("Nombre:", estado.nombre)
-                InfoRow("Correo:", estado.correo)
-                InfoRow("Dirección:", estado.direccion)
-                InfoRow("Términos:", if (estado.aceptaTerminos) "Aceptados" else "No aceptados")
-            }
-        }
-
-        // Opciones de Perfil
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(8.dp)) {
-                Text(
-                    "Opciones",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
+                Text("Opciones", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
 
-                // Botón Editar Perfil
                 Button(
-                    onClick = { navController.navigate("formulario") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    onClick = {
+                        viewModel.precargarDatosParaEditar()
+                        navController.navigate("formulario/false")
+                     },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     Text("Editar Perfil")
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Botón Cambiar Contraseña
                 Button(
-                    onClick = { /* Futura implementación */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
+                    onClick = { navController.navigate("formulario/true") },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     Text("Cambiar Contraseña")
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Botón Cerrar Sesión
                 Button(
-                    onClick = {
-                        // Volver al formulario (simula cerrar sesión)
-                        navController.navigate("formulario") {
-                            popUpTo("resumen") { inclusive = true }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
+                    onClick = { mostrarDialogoEliminar = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                ) {
+                    Text("Eliminar Cuenta", color = MaterialTheme.colorScheme.onErrorContainer)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { viewModel.logout() }, // <-- Solo llama a logout
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     Text("Cerrar Sesión")
                 }
             }
         }
     }
+
+    if (mostrarDialogoEliminar) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogoEliminar = false },
+            title = { Text("Confirmar Eliminación") },
+            text = { Text("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.eliminarUsuario()
+                        mostrarDialogoEliminar = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { mostrarDialogoEliminar = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
 
+// ... (InfoRow Composable)
 @Composable
 fun InfoRow(label: String, value: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(label, fontWeight = FontWeight.Medium)

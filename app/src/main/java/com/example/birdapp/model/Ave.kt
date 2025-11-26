@@ -1,14 +1,18 @@
 package com.example.birdapp.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Ave(
     val uid: String,
     val name: Name,
     val images: Images,
-    val _links: Links
+    @SerializedName("_links")
+    val links: Links
 ) {
     data class Name(
         val spanish: String,
-        val english: String
+        val english: String,
+        val latin: String? // <-- Corregido: Ahora es opcional
     )
 
     data class Images(
@@ -16,8 +20,6 @@ data class Ave(
     )
 
     data class Links(
-        val self: Href
-    ) {
-        data class Href(val href: String)
-    }
+        val self: String
+    )
 }
