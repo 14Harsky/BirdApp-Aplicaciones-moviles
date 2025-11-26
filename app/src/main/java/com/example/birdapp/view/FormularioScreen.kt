@@ -16,18 +16,16 @@ import kotlinx.coroutines.flow.collectLatest
 fun FormularioScreen(
     navController: NavController,
     viewModel: UsuarioViewModel,
-    esCambioClave: Boolean? // null: registrar, true: cambiar clave, false: editar perfil
+    esCambioClave: Boolean?
 ) {
     val estado by viewModel.estado.collectAsState()
 
-    // Este LaunchedEffect escucha los eventos de navegación para el registro
-    // Se activa solo cuando estamos en modo de registro (esCambioClave es null)
+    
     if (esCambioClave == null) {
         LaunchedEffect(Unit) {
             viewModel.navigationEvent.collectLatest { event ->
                 if (event is NavigationEvent.NavigateToLogin) {
                     navController.navigate("login") {
-                        // Limpia la pantalla de registro del historial
                         popUpTo("registro") { inclusive = true }
                     }
                 }
@@ -49,7 +47,7 @@ fun FormularioScreen(
         Text(titulo, style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (esCambioClave == null || esCambioClave == false) { // Registrar o Editar
+        if (esCambioClave == null || esCambioClave == false) { 
             OutlinedTextField(
                 value = estado.nombre,
                 onValueChange = viewModel::onNombreChange,
@@ -76,7 +74,7 @@ fun FormularioScreen(
             )
         }
 
-        if (esCambioClave == null || esCambioClave == true) { // Registrar o Cambiar Clave
+        if (esCambioClave == null || esCambioClave == true) {
             OutlinedTextField(
                 value = estado.clave,
                 onValueChange = viewModel::onClaveChange,
@@ -105,7 +103,7 @@ fun FormularioScreen(
             )
         }
 
-        if (esCambioClave == null) { // Solo registrar
+        if (esCambioClave == null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = estado.aceptaTerminos,
@@ -119,15 +117,15 @@ fun FormularioScreen(
         Button(
             onClick = {
                 when (esCambioClave) {
-                    true -> { // Cambiar clave
+                    true -> {
                         viewModel.cambiarClave()
                         navController.popBackStack()
                     }
-                    false -> { // Editar perfil
+                    false -> {
                         viewModel.actualizarPerfil()
                         navController.popBackStack()
                     }
-                    null -> { // Registrar
+                    null -> {
                         viewModel.registrarUsuario()
                     }
                 }
