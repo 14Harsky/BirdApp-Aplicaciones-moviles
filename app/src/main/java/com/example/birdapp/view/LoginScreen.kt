@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel) {
     val estado by viewModel.estado.collectAsState()
 
-    // Este LaunchedEffect escucha los eventos de navegación del ViewModel
+    
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { event ->
             when (event) {
@@ -26,7 +26,7 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel) {
                     }
                 }
                 is NavigationEvent.NavigateToLogin -> {
-                     // En caso de registro exitoso, se navega al login
+                     
                      navController.navigate("login") {
                         popUpTo("registro") { inclusive = true }
                     }
@@ -68,4 +68,5 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel) {
             Text("¿No tienes una cuenta? Regístrate")
         }
     }
+
 }
