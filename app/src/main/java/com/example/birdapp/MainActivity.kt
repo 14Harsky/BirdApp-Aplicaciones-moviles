@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             val avesObservadasViewModel: AvesObservadasViewModel = viewModel()
             val isSessionActive by usuarioViewModel.isSessionActive.collectAsState()
 
-            
+            // Este LaunchedEffect maneja el fin de la sesión (logout o cuenta eliminada)
             LaunchedEffect(isSessionActive) {
                 if (!isSessionActive && navController.currentDestination?.route != "login") {
                      navController.navigate("login") {
