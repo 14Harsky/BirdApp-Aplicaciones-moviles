@@ -32,7 +32,7 @@ class UsuarioViewModel : ViewModel() {
     private val _userSession = MutableStateFlow<AuthResponse?>(null)
     private val apiService = UsuarioApiService.create()
 
-    // --- Funciones para actualizar el estado de la UI (CORREGIDAS) ---
+    // Actualizar el estado
     fun onNombreChange(valor: String) {
         _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
     }
@@ -53,7 +53,7 @@ class UsuarioViewModel : ViewModel() {
         _estado.update { it.copy(aceptaTerminos = valor) }
     }
 
-    // --- Lógica de la API ---
+    // Lógica API
     fun registrarUsuario() {
         if (!validarFormulario()) return
         viewModelScope.launch {
@@ -62,7 +62,6 @@ class UsuarioViewModel : ViewModel() {
                 apiService.register(usuario)
                 _navigationEvent.emit(NavigationEvent.NavigateToLogin)
             } catch (e: Exception) {
-                // Manejar error
             }
         }
     }
@@ -77,7 +76,6 @@ class UsuarioViewModel : ViewModel() {
                 _estado.update { it.copy(nombre = authResponse.nombre, correo = authResponse.correo, clave = "", repetirClave = "") }
                 _navigationEvent.emit(NavigationEvent.NavigateToResumen)
             } catch (e: Exception) {
-                // Manejar error
             }
         }
     }
@@ -136,7 +134,7 @@ class UsuarioViewModel : ViewModel() {
         }
     }
 
-    // --- Funciones de Validación (CORREGIDAS) ---
+    // Funciones de Validación
     fun validarFormulario(): Boolean {
         val estadoActual = _estado.value
         val errores = UsuarioErrores(
