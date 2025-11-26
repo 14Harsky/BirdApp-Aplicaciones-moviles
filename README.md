@@ -1,4 +1,6 @@
-# BirdApp-Aplicaciones-moviles
+# BirdApp-Aplicaciones-moviles (abrir Master)
+
+Integrantes: Ignacio Araya, Fernando Donoso.
 
 BirdApp es una aplicación móvil diseñada para la comunidad de avistamiento de aves, Nos basamos en el hecho de que Chile, nuestro pais, es un pais con la Biodiversidad mas grande del mundo, debido a su gran variedad de climas, ambientes y ecosistemas.
 Es por esta razon que nace "BirdApp" que permite a los usuarios registrar, explorar y gestionar sus observaciones de aves.
@@ -10,3 +12,20 @@ El sistema se basa en:
 La aplicacion se ha desarrollado en Kotlin y gestionamos los estados con StateFlow.
 
 La aplicacion aun esta en desarrollo por lo que hay un amplio abanico de posibilidades en las que se puede mejorar la apliacacion, como asi tambien implentar mas funciones nativas del celular.
+
+Endpoints:
+
+-API Externa:
+https://aves.ninjas.cl/api/birds
+
+-Backend:
+Api/usuario/register
+Api/usuario/login
+Api/usuario/editar/{id}
+Api/usuario/eliminar/{id}
+Api/usuario/editar/{id}/password
+
+pasos para ejecutar:
+-dirigirse a la rama Master y descargar el proyecto (Birdapp y backend).
+-utilizar Laragon para crear base de datos local "db_usuarios".
+-correr backend y ejecutar la apliación.
