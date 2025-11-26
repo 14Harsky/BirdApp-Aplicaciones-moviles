@@ -67,7 +67,7 @@ fun DetalleAveObservadaScreen(
     val location = if (latLngParts.size == 2 && latLngParts[0] != null && latLngParts[1] != null) {
         LatLng(latLngParts[0]!!, latLngParts[1]!!)
     } else {
-        null // O una ubicación por defecto
+        null
     }
 
     Column(
@@ -81,7 +81,7 @@ fun DetalleAveObservadaScreen(
         Text("Observada el: ${ave.fechaObservacion}", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Main image from API
+        
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             AsyncImage(
                 model = ave.imageUrl,
@@ -129,7 +129,7 @@ fun DetalleAveObservadaScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Buttons are now below the map
+        
         Button(
             onClick = { launcher.launch("image/*") },
             modifier = Modifier.fillMaxWidth()
@@ -154,11 +154,11 @@ fun DetalleAveObservadaScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Section for user-uploaded images
+        
         Text("Tus Fotos:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Display the image that is about to be uploaded
+        
         selectedImageUri?.let {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 Text("Nueva foto a guardar:")
@@ -226,4 +226,5 @@ fun DetalleAveObservadaScreen(
             }
         }
     }
+
 }
