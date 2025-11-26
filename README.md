@@ -29,3 +29,6 @@ pasos para ejecutar:
 -dirigirse a la rama Master y descargar el proyecto (Birdapp y backend).
 -utilizar Laragon para crear base de datos local "db_usuarios".
 -correr backend y ejecutar la apliación.
+
+imagen del archivo apk y la key correspondientes
+![apk key](https://github.com/user-attachments/assets/6a21897d-4623-4384-87ab-ea5c365972c4)
